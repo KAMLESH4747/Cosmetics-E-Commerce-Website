@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhumi Beauty | Premium Cosmetics</title>
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-dark': '#1a1a1a',
+                        'brand-rose': '#eeb4b4',
+                        'brand-cream': '#f9f5f0',
+                        'brand-accent': '#d4a373'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-brand-cream text-brand-dark antialiased overflow-x-hidden">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 transition-all duration-300 px-6 py-4" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-serif font-bold tracking-tighter">Bhumi Beauty.</a>
+
+            <div class="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
+                <a href="#collections" class="hover:text-brand-rose transition-colors">Collections</a>
+                <a href="#bestsellers" class="hover:text-brand-rose transition-colors">Best Sellers</a>
+                <a href="#about" class="hover:text-brand-rose transition-colors">Our Story</a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button class="hover:text-brand-rose transition-colors">Search</button>
+                <button id="cart-btn" class="hover:text-brand-rose transition-colors relative">
+                    Cart (<span id="cart-count">0</span>)
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar"
+        class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-2xl z-[60] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-brand-cream/30">
+            <h2 class="text-2xl font-serif font-medium">Your Bag</h2>
+            <button id="close-cart" class="text-gray-500 hover:text-brand-dark transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Cart Items Container -->
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- Empty State (Default) -->
+            <div class="h-full flex flex-col items-center justify-center text-center text-gray-500">
+                <p class="mb-4">Your bag is empty.</p>
+                <button id="start-shopping"
+                    class="text-brand-dark border-b border-brand-dark pb-1 text-sm uppercase tracking-widest hover:text-brand-rose hover:border-brand-rose transition-colors">Start
+                    Shopping</button>
+            </div>
+        </div>
+
+        <!-- Cart Footer -->
+        <div class="p-6 border-t border-gray-100 bg-brand-cream/30">
+            <div class="flex justify-between items-center mb-4 text-lg font-medium">
+                <span>Subtotal</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-6 text-center">Shipping & taxes calculated at checkout.</p>
+            <button
+                class="w-full bg-brand-dark text-white py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-brand-rose transition-colors duration-300">
+                Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-50 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+        <div
+            class="bg-white rounded-lg shadow-2xl w-full max-w-4xl overflow-hidden max-h-[90vh] overflow-y-auto relative animate-fade-in-up">
+            <button id="close-modal"
+                class="absolute top-4 right-4 z-10 text-gray-500 hover:text-brand-dark bg-white/50 rounded-full p-2 backdrop-blur-sm transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                <!-- Modal Image -->
+                <div class="bg-brand-cream aspect-square md:aspect-auto relative">
+                    <div id="modal-image" class="w-full h-full bg-stone-200"></div>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-8 md:p-12 flex flex-col justify-center">
+                    <div class="uppercase tracking-widest text-xs text-brand-rose font-bold mb-3" id="modal-category">
+                        Category</div>
+                    <h2 class="text-3xl md:text-4xl font-serif mb-4" id="modal-title">Product Title</h2>
+                    <p class="text-xl font-medium mb-6" id="modal-price">$0.00</p>
+
+                    <p class="text-gray-600 mb-8 leading-relaxed" id="modal-description">
+                        Description goes here.
+                    </p>
+
+                    <div class="space-y-4">
+                        <button id="modal-add-to-cart"
+                            class="w-full bg-brand-dark text-white py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-brand-rose transition-colors duration-300">
+                            Add to Cart
+                        </button>
+                        <p class="text-xs text-center text-gray-500 mt-4">Free shipping on orders over $50</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        <!-- Background Gradient/Image Placeholder -->
+        <div class="absolute inset-0 bg-[url('images/hero-bg.png')] bg-cover bg-center z-0">
+            <div class="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
+        </div>
+
+        <!-- Animated Blob (Pure CSS/Tailwind) -->
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/40 blur-3xl rounded-full mix-blend-overlay animate-pulse">
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+            <h2 class="text-sm md:text-base uppercase tracking-[0.3em] mb-4 opacity-0 hero-elem">Redefining Radiance
+            </h2>
+            <h1 class="text-5xl md:text-8xl font-serif font-medium leading-tight mb-6 opacity-0 hero-elem">
+                Pure Beauty <br>
+                <span class="italic text-brand-accent">Reimagined</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto opacity-0 hero-elem">
+                Discover a curated collection of premium cosmetics designed to enhance your natural glow.
+            </p>
+            <div class="opacity-0 hero-elem">
+                <a href="#collections"
+                    class="inline-block px-8 py-4 border border-brand-dark hover:bg-brand-dark hover:text-white transition-all duration-300 uppercase tracking-widest text-xs font-semibold">
+                    Shop Collection
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+
+        <!-- Categories Section (Horizontal Scroll) -->
+        <section id="collections" class="py-20 pl-6 overflow-hidden">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-end justify-between mb-8 pr-6">
+                    <div>
+                        <h3 class="text-sm uppercase tracking-widest text-brand-rose mb-2">Curated For You</h3>
+                        <h2 class="text-3xl md:text-4xl font-serif">Shop by Category</h2>
+                    </div>
+                    <div class="hidden md:flex space-x-2">
+                        <button
+                            class="w-10 h-10 rounded-full border border-brand-dark/20 flex items-center justify-center hover:bg-brand-dark hover:text-white transition-colors">&larr;</button>
+                        <button
+                            class="w-10 h-10 rounded-full border border-brand-dark/20 flex items-center justify-center hover:bg-brand-dark hover:text-white transition-colors">&rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Scroll Container -->
+                <div class="flex space-x-6 overflow-x-auto no-scrollbar pb-10 snap-x snap-mandatory">
+                    <!-- Category Card 1 -->
+                    <div
+                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-stone-100 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity">
+                        </div>
+                        <div
+                            class="absolute bottom-6 left-6 text-white transform group-hover:-translate-y-2 transition-transform duration-300">
+                            <h3 class="text-2xl font-serif">Skincare</h3>
+                            <a href="#"
+                                class="text-sm border-b border-white pb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">View
+                                Collection</a>
+                        </div>
+                    </div>
+
+                    <!-- Category Card 2 -->
+                    <div
+                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-orange-50 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity">
+                        </div>
+                        <div
+                            class="absolute bottom-6 left-6 text-white transform group-hover:-translate-y-2 transition-transform duration-300">
+                            <h3 class="text-2xl font-serif">Makeup</h3>
+                            <a href="#"
+                                class="text-sm border-b border-white pb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">View
+                                Collection</a>
+                        </div>
+                    </div>
+
+                    <!-- Category Card 3 -->
+                    <div
+                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-rose-50 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity">
+                        </div>
+                        <div
+                            class="absolute bottom-6 left-6 text-white transform group-hover:-translate-y-2 transition-transform duration-300">
+                            <h3 class="text-2xl font-serif">Fragrance</h3>
+                            <a href="#"
+                                class="text-sm border-b border-white pb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">View
+                                Collection</a>
+                        </div>
+                    </div>
+
+                    <!-- Category Card 4 -->
+                    <div
+                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-teal-50 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity">
+                        </div>
+                        <div
+                            class="absolute bottom-6 left-6 text-white transform group-hover:-translate-y-2 transition-transform duration-300">
+                            <h3 class="text-2xl font-serif">Wellness</h3>
+                            <a href="#"
+                                class="text-sm border-b border-white pb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">View
+                                Collection</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Sellers Section -->
+        <section id="bestsellers" class="py-20 px-6 bg-white">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h3 class="text-sm uppercase tracking-widest text-brand-rose mb-2">Editor's Picks</h3>
+                    <h2 class="text-3xl md:text-5xl font-serif mb-6">Our Best Sellers</h2>
+                    <p class="text-gray-500 max-w-lg mx-auto">Discover the products that our community loves the most.
+                        Scientifically formulated and aesthetically pleasing.</p>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+                    <!-- Product 1 -->
+                    <div class="group relative product-card" data-id="1" data-name="Luminous Silk Serum"
+                        data-price="48.00" data-image="images/serum.png" data-category="Skincare"
+                        data-description="A lightweight, hydrating serum that gives your skin an instant, dewy glow. Enriched with hyaluronic acid and silk proteins for continuous moisture.">
+                        <div
+                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                            <!-- Image -->
+                            <img src="images/serum.png" alt="Luminous Silk Serum"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+
+                            <!-- Quick Action Overlay -->
+                            <div
+                                class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <button
+                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                                Add to Cart
+                            </button>
+                            <span
+                                class="absolute top-4 left-4 bg-brand-rose text-white text-[10px] uppercase font-bold px-2 py-1 tracking-wider">New</span>
+                        </div>
+                        <div class="text-center">
+                            <h3
+                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                Luminous
+                                Silk Serum</h3>
+                            <p class="text-xs text-gray-500 mb-2">Hydration & Glow</p>
+                            <span class="font-medium">$48.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="group relative product-card" data-id="2" data-name="Velvet Matte Lipstick"
+                        data-price="32.00" data-image="images/lipstick.png" data-category="Makeup"
+                        data-description="Rich, highly pigmented color with a comfortable matte finish. Infused with Vitamin E to keep lips soft and hydrated all day long.">
+                        <div
+                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                            <img src="images/lipstick.png" alt="Velvet Matte Lipstick"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <button
+                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <h3
+                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                Velvet
+                                Matte Lipstick</h3>
+                            <p class="text-xs text-gray-500 mb-2">Long-lasting Color</p>
+                            <span class="font-medium">$32.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="group relative product-card" data-id="3" data-name="Night Repair Oil" data-price="65.00"
+                        data-image="images/oil.png" data-category="Skincare"
+                        data-description="A potent blend of botanical oils that works overnight to repair and rejuvenate your skin. Wake up to a visibly smoother and brighter complexion.">
+                        <div
+                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                            <img src="images/oil.png" alt="Night Repair Oil"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <button
+                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <h3
+                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                Night
+                                Repair Oil</h3>
+                            <p class="text-xs text-gray-500 mb-2">Anti-aging Complex</p>
+                            <span class="font-medium">$65.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="group relative product-card" data-id="4" data-name="Daily Mineral SPF"
+                        data-price="28.00" data-image="images/spf.png" data-category="Wellness"
+                        data-description="Lightweight, non-greasy mineral sunscreen that provides broad-spectrum protection without the white cast. Safe for sensitive skin and reefs.">
+                        <div
+                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                            <img src="images/spf.png" alt="Daily Mineral SPF"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <button
+                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                                Add to Cart
+                            </button>
+                            <span
+                                class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">Vegan</span>
+                        </div>
+                        <div class="text-center">
+                            <h3
+                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                Daily
+                                Mineral SPF</h3>
+                            <p class="text-xs text-gray-500 mb-2">Broad Spectrum Protection</p>
+                            <span class="font-medium">$28.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Marquee / Social Section -->
+        <section class="py-12 bg-brand-rose/10 overflow-hidden">
+            <div class="whitespace-nowrap animate-marquee flex items-center space-x-12 opacity-60">
+                <span class="text-4xl font-serif italic">Clean Beauty</span>
+                <span class="text-xl">✦</span>
+                <span class="text-4xl font-serif italic">Cruelty Free</span>
+                <span class="text-xl">✦</span>
+                <span class="text-4xl font-serif italic">Sustainable</span>
+                <span class="text-xl">✦</span>
+                <span class="text-4xl font-serif italic">Vegan Formulas</span>
+                <span class="text-xl">✦</span>
+                <span class="text-4xl font-serif italic">Clean Beauty</span>
+                <span class="text-xl">✦</span>
+                <span class="text-4xl font-serif italic">Cruelty Free</span>
+                <span class="text-xl">✦</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-brand-dark text-white py-20 px-6">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="md:col-span-1">
+                    <a href="#" class="text-3xl font-serif font-bold tracking-tighter block mb-6">Bhumi Beauty.</a>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Redefining the standards of beauty with
+                        conscious formulation and premium aesthetics.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-6 text-brand-rose">Shop</h4>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Skincare</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Makeup</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Fragrance</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Gift Sets</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-6 text-brand-rose">Support</h4>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Shipping & Returns</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-6 text-brand-rose">Newsletter</h4>
+                    <p class="text-gray-400 text-sm mb-4">Subscribe for latest drops and exclusive offers.</p>
+                    <div class="flex border-b border-gray-700 pb-2">
+                        <input type="email" placeholder="Your email address"
+                            class="bg-transparent w-full outline-none text-white text-sm placeholder-gray-600">
+                        <button
+                            class="text-xs font-bold uppercase hover:text-brand-rose transition-colors">Join</button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- GSAP (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Custom Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
