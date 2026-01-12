@@ -53,10 +53,22 @@
                 <a href="#about" class="hover:text-brand-rose transition-colors">Our Story</a>
             </div>
 
-            <div class="flex items-center space-x-4">
-                <button class="hover:text-brand-rose transition-colors">Search</button>
-                <button id="cart-btn" class="hover:text-brand-rose transition-colors relative">
-                    Cart (<span id="cart-count">0</span>)
+            <div class="flex items-center space-x-6">
+                <button id="search-btn" class="hover:text-brand-rose transition-colors" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                </button>
+                <button id="cart-btn" class="hover:text-brand-rose transition-colors relative" aria-label="Cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                    <span id="cart-count"
+                        class="absolute -top-1 -right-2 bg-brand-rose text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">0</span>
                 </button>
             </div>
         </div>
@@ -93,7 +105,7 @@
                 <span id="cart-total">$0.00</span>
             </div>
             <p class="text-xs text-gray-500 mb-6 text-center">Shipping & taxes calculated at checkout.</p>
-            <button
+            <button id="checkout-btn"
                 class="w-full bg-brand-dark text-white py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-brand-rose transition-colors duration-300">
                 Checkout
             </button>
@@ -102,6 +114,26 @@
 
     <!-- Overlay -->
     <div id="overlay" class="fixed inset-0 bg-black/50 z-50 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Search Overlay -->
+    <div id="search-overlay"
+        class="fixed top-0 left-0 w-full bg-white z-[60] transform -translate-y-full transition-transform duration-300 shadow-xl p-8">
+        <div class="max-w-4xl mx-auto flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-6 h-6 text-gray-400 mr-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+            <input type="text" id="search-input" placeholder="Search for products..."
+                class="w-full text-2xl font-serif outline-none placeholder-gray-300 bg-transparent h-16">
+            <button id="close-search" class="ml-4 text-gray-500 hover:text-brand-dark">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
 
     <!-- Product Detail Modal -->
     <div id="product-modal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
@@ -198,6 +230,8 @@
                     <!-- Category Card 1 -->
                     <div
                         class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-stone-100 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        <img src="images/category_skincare.png" alt="Skincare"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity">
                         </div>
@@ -212,7 +246,9 @@
 
                     <!-- Category Card 2 -->
                     <div
-                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-orange-50 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-stone-100 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        <img src="images/category_makeup.png" alt="Makeup"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity">
                         </div>
@@ -227,7 +263,9 @@
 
                     <!-- Category Card 3 -->
                     <div
-                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-rose-50 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-stone-100 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        <img src="images/category_face_cream.png" alt="Face Cream"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity">
                         </div>
@@ -242,7 +280,9 @@
 
                     <!-- Category Card 4 -->
                     <div
-                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-teal-50 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        class="min-w-[280px] md:min-w-[350px] aspect-[3/4] bg-stone-100 rounded-lg relative group overflow-hidden cursor-pointer snap-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                        <img src="images/category_hair_serum.png" alt="Wellness"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity">
                         </div>
@@ -269,15 +309,15 @@
                 </div>
 
                 <!-- Product Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-12">
                     <!-- Product 1 -->
-                    <div class="group relative product-card" data-id="1" data-name="Luminous Silk Serum"
-                        data-price="48.00" data-image="images/serum.png" data-category="Skincare"
-                        data-description="A lightweight, hydrating serum that gives your skin an instant, dewy glow. Enriched with hyaluronic acid and silk proteins for continuous moisture.">
+                    <div class="group relative product-card" data-id="1" data-name="Salicylic Acid 2%"
+                        data-price="11.00" data-image="images/minimalist_salicylic.png" data-category="Skincare"
+                        data-description="A daily gentle exfoliant with 2% Salicylic Acid that wards off acne, blackheads and keeps oils in check for that flawless matte look.">
                         <div
                             class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
                             <!-- Image -->
-                            <img src="images/serum.png" alt="Luminous Silk Serum"
+                            <img src="images/minimalist_salicylic.png" alt="Salicylic Acid 2%"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
 
                             <!-- Quick Action Overlay -->
@@ -289,25 +329,24 @@
                                 Add to Cart
                             </button>
                             <span
-                                class="absolute top-4 left-4 bg-brand-rose text-white text-[10px] uppercase font-bold px-2 py-1 tracking-wider">New</span>
+                                class="absolute top-4 left-4 bg-brand-rose text-white text-[10px] uppercase font-bold px-2 py-1 tracking-wider">Bestseller</span>
                         </div>
                         <div class="text-center">
                             <h3
                                 class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Luminous
-                                Silk Serum</h3>
-                            <p class="text-xs text-gray-500 mb-2">Hydration & Glow</p>
-                            <span class="font-medium">$48.00</span>
+                                Salicylic Acid 2%</h3>
+                            <p class="text-xs text-gray-500 mb-2">For Acne & Oil Control</p>
+                            <span class="font-medium">$11.00</span>
                         </div>
                     </div>
 
                     <!-- Product 2 -->
-                    <div class="group relative product-card" data-id="2" data-name="Velvet Matte Lipstick"
-                        data-price="32.00" data-image="images/lipstick.png" data-category="Makeup"
-                        data-description="Rich, highly pigmented color with a comfortable matte finish. Infused with Vitamin E to keep lips soft and hydrated all day long.">
+                    <div class="group relative product-card" data-id="2" data-name="Niacinamide 10%" data-price="12.00"
+                        data-image="images/minimalist_niacinamide.png" data-category="Skincare"
+                        data-description="A nourishing, daily serum packed with pure Vitamin B3 (Niacinamide) and Matmarine. Reduces sebum activity and improves skin texture.">
                         <div
                             class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/lipstick.png" alt="Velvet Matte Lipstick"
+                            <img src="images/minimalist_niacinamide.png" alt="Niacinamide 10%"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
                             <button
                                 class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
@@ -317,20 +356,19 @@
                         <div class="text-center">
                             <h3
                                 class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Velvet
-                                Matte Lipstick</h3>
-                            <p class="text-xs text-gray-500 mb-2">Long-lasting Color</p>
-                            <span class="font-medium">$32.00</span>
+                                Niacinamide 10%</h3>
+                            <p class="text-xs text-gray-500 mb-2">For Blemishes & Oil</p>
+                            <span class="font-medium">$12.00</span>
                         </div>
                     </div>
 
                     <!-- Product 3 -->
-                    <div class="group relative product-card" data-id="3" data-name="Night Repair Oil" data-price="65.00"
-                        data-image="images/oil.png" data-category="Skincare"
-                        data-description="A potent blend of botanical oils that works overnight to repair and rejuvenate your skin. Wake up to a visibly smoother and brighter complexion.">
+                    <div class="group relative product-card" data-id="3" data-name="Vitamin C 10%" data-price="15.00"
+                        data-image="images/minimalist_vitaminc.png" data-category="Skincare"
+                        data-description="A glow-boosting daily serum packaged with pure Vitamin C (L-Ascorbic Acid) that brightens and tones sun damaged and dull skin.">
                         <div
                             class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/oil.png" alt="Night Repair Oil"
+                            <img src="images/minimalist_vitaminc.png" alt="Vitamin C 10%"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
                             <button
                                 class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
@@ -340,38 +378,305 @@
                         <div class="text-center">
                             <h3
                                 class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Night
-                                Repair Oil</h3>
-                            <p class="text-xs text-gray-500 mb-2">Anti-aging Complex</p>
-                            <span class="font-medium">$65.00</span>
+                                Vitamin C 10%</h3>
+                            <p class="text-xs text-gray-500 mb-2">For Brightening</p>
+                            <span class="font-medium">$15.00</span>
                         </div>
                     </div>
 
                     <!-- Product 4 -->
-                    <div class="group relative product-card" data-id="4" data-name="Daily Mineral SPF"
-                        data-price="28.00" data-image="images/spf.png" data-category="Wellness"
-                        data-description="Lightweight, non-greasy mineral sunscreen that provides broad-spectrum protection without the white cast. Safe for sensitive skin and reefs.">
+                    <div class="group relative product-card" data-id="4" data-name="Oat Extract 6%" data-price="10.00"
+                        data-image="images/minimalist_cleanser.png" data-category="Cleanser"
+                        data-description="A mild, low foaming soap-free face wash for sensitive skin. Formulated with Colloidal Oat and soothing ingredients to calm irritation.">
                         <div
                             class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/spf.png" alt="Daily Mineral SPF"
+                            <img src="images/minimalist_cleanser.png" alt="Oat Extract 6% Gentle Cleanser"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
                             <button
                                 class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
                                 Add to Cart
                             </button>
                             <span
-                                class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">Vegan</span>
+                                class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">New</span>
                         </div>
                         <div class="text-center">
                             <h3
                                 class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Daily
-                                Mineral SPF</h3>
-                            <p class="text-xs text-gray-500 mb-2">Broad Spectrum Protection</p>
+                                Oat Extract 6%</h3>
+                            <p class="text-xs text-gray-500 mb-2">Gentle Cleanser</p>
+                            <span class="font-medium">$10.00</span>
+                        </div>
+                    </div>
+
+                    <!-- New Product 5: Wellness -->
+                    <div class="group relative product-card" data-id="5" data-name="Calm & Sleep Mist"
+                        data-price="24.00" data-image="images/wellness_calm_mist.png" data-category="Wellness"
+                        data-description="A soothing botanical mist infused with lavender and chamomile to promote deep relaxation and restful sleep.">
+                        <div
+                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                            <img src="images/wellness_calm_mist.png" alt="Calm & Sleep Mist"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <button
+                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                                Add to Cart
+                            </button>
+                            <span
+                                class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">New</span>
+                        </div>
+                        <div class="text-center">
+                            <h3
+                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                Calm & Sleep Mist</h3>
+                            <p class="text-xs text-gray-500 mb-2">Wellness</p>
+                            <span class="font-medium">$24.00</span>
+                        </div>
+                    </div>
+
+                    <!-- New Product 6: Fragrance -->
+                    <div class="group relative product-card" data-id="6" data-name="Rose & Santal" data-price="85.00"
+                        data-image="images/fragrance_rose_santal.png" data-category="Fragrance"
+                        data-description="An intoxicating blend of Turkish rose and creamy sandalwood, creating a sophisticated and timeless scent profile.">
+                        <div
+                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                            <img src="images/fragrance_rose_santal.png" alt="Rose & Santal Eau de Parfum"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <button
+                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <h3
+                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                Rose & Santal</h3>
+                            <p class="text-xs text-gray-500 mb-2">Eau de Parfum</p>
+                            <span class="font-medium">$85.00</span>
+                        </div>
+                    </div>
+
+                    <!-- New Product 7: Makeup -->
+                    <div class="group relative product-card" data-id="7" data-name="Velvet Matte Rouge"
+                        data-price="32.00" data-image="images/makeup_velvet_lipstick.png" data-category="Makeup"
+                        data-description="A highly pigmented, non-drying matte lipstick that delivers intense color payoff with a weightless, velvet finish.">
+                        <div
+                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                            <img src="images/makeup_velvet_lipstick.png" alt="Velvet Matte Lipstick"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <button
+                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <h3
+                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                Velvet Matte Rouge</h3>
+                            <p class="text-xs text-gray-500 mb-2">Makeup</p>
+                            <span class="font-medium">$32.00</span>
+                        </div>
+                    </div>
+
+                    <!-- New Product 8: Skincare -->
+                    <div class="group relative product-card" data-id="8" data-name="Hyaluronic Boost" data-price="28.00"
+                        data-image="images/skincare_hyaluronic_serum.png" data-category="Skincare"
+                        data-description="Pure multi-molecular weight Hyaluronic Acid serum that penetrates deep to hydrate, plumb, and smooth fine lines.">
+                        <div
+                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                            <img src="images/skincare_hyaluronic_serum.png" alt="Hyaluronic Acid Serum"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <button
+                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                                Add to Cart
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <h3
+                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                Hyaluronic Boost</h3>
+                            <p class="text-xs text-gray-500 mb-2">Skincare</p>
                             <span class="font-medium">$28.00</span>
                         </div>
                     </div>
                 </div>
+                <!-- New Product 9: Cetaphil Cleanser -->
+                <div class="group relative product-card" data-id="9" data-name="Gentle Skin Cleanser" data-price="14.00"
+                    data-image="images/cetaphil_cleanser_1768135169214.png" data-category="Skincare"
+                    data-description="A creamy formula that clinically hydrates while cleansing to strengthen the skin's moisture barrier.">
+                    <div
+                        class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                        <img src="images/cetaphil_cleanser_1768135169214.png" alt="Gentle Skin Cleanser"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                        <button
+                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                            Add to Cart
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <h3
+                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                            Gentle Skin Cleanser</h3>
+                        <p class="text-xs text-gray-500 mb-2">Cetaphil</p>
+                        <span class="font-medium">$14.00</span>
+                    </div>
+                </div>
+
+                <!-- New Product 10: Minimalist Niacinamide -->
+                <div class="group relative product-card" data-id="10" data-name="Niacinamide 10% Serum"
+                    data-price="10.00" data-image="images/minimalist_niacinamide_1768135185096.png"
+                    data-category="Skincare"
+                    data-description="A soothing, daily serum packaged with pure Vitamin B3 (Niacinamide) to reduce sebum and improve texture.">
+                    <div
+                        class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                        <img src="images/minimalist_niacinamide_1768135185096.png" alt="Niacinamide 10% Serum"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                        <button
+                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                            Add to Cart
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <h3
+                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                            Niacinamide 10% Serum</h3>
+                        <p class="text-xs text-gray-500 mb-2">Minimalist</p>
+                        <span class="font-medium">$10.00</span>
+                    </div>
+                </div>
+
+                <!-- New Product 11: Cetaphil Cream -->
+                <div class="group relative product-card" data-id="11" data-name="Moisturizing Cream" data-price="16.00"
+                    data-image="images/cetaphil_cream_1768135200688.png" data-category="Skincare"
+                    data-description="Rich, non-greasy cream that provides 48-hour hydration for very dry to dry, sensitive skin.">
+                    <div
+                        class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                        <img src="images/cetaphil_cream_1768135200688.png" alt="Moisturizing Cream"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                        <button
+                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                            Add to Cart
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <h3
+                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                            Moisturizing Cream</h3>
+                        <p class="text-xs text-gray-500 mb-2">Cetaphil</p>
+                        <span class="font-medium">$16.00</span>
+                    </div>
+                </div>
+
+                <!-- New Product 12: Minimalist Cleanser -->
+                <div class="group relative product-card" data-id="12" data-name="Salicylic Acid Cleanser"
+                    data-price="9.00" data-image="images/minimalist_cleanser_1768135218260.png" data-category="Skincare"
+                    data-description="A daily, gentle exfoliating cleanser with Salicylic Acid to reduce acne and oiliness without drying.">
+                    <div
+                        class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                        <img src="images/minimalist_cleanser_1768135218260.png" alt="Salicylic Acid Cleanser"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                        <button
+                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                            Add to Cart
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <h3
+                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                            Salicylic Acid Cleanser</h3>
+                        <p class="text-xs text-gray-500 mb-2">Minimalist</p>
+                        <span class="font-medium">$9.00</span>
+                    </div>
+                </div>
+
+                <!-- New Product 13: Luminous Silk Foundation -->
+                <div class="group relative product-card" data-id="13" data-name="Luminous Silk Foundation"
+                    data-price="42.00" data-image="images/makeup_luminous_foundation.png" data-category="Makeup"
+                    data-description="A lightweight, buildable coverage foundation that delivers a natural, luminous finish for a flawless complexion.">
+                    <div
+                        class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                        <img src="images/makeup_luminous_foundation.png" alt="Luminous Silk Foundation"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                        <button
+                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                            Add to Cart
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <h3
+                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                            Luminous Silk Foundation</h3>
+                        <p class="text-xs text-gray-500 mb-2">Makeup</p>
+                        <span class="font-medium">$42.00</span>
+                    </div>
+                </div>
+
+                <!-- New Product 14: Peptide Eye Cream -->
+                <div class="group relative product-card" data-id="14" data-name="Peptide Eye Cream" data-price="38.00"
+                    data-image="images/skincare_peptide_eye_cream.png" data-category="Skincare"
+                    data-description="A rich, restorative eye cream infused with peptides to diminish dark circles and smooth fine lines.">
+                    <div
+                        class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                        <img src="images/skincare_peptide_eye_cream.png" alt="Peptide Eye Cream"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                        <button
+                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                            Add to Cart
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <h3
+                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                            Peptide Eye Cream</h3>
+                        <p class="text-xs text-gray-500 mb-2">Skincare</p>
+                        <span class="font-medium">$38.00</span>
+                    </div>
+                </div>
+
+                <!-- New Product 15: Volumizing Mascara -->
+                <div class="group relative product-card" data-id="15" data-name="Volumizing Mascara" data-price="22.00"
+                    data-image="images/makeup_volumizing_mascara.png" data-category="Makeup"
+                    data-description="Intense black mascara that delivers instant volume and length without clumping or flaking.">
+                    <div
+                        class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                        <img src="images/makeup_volumizing_mascara.png" alt="Volumizing Mascara"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                        <button
+                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                            Add to Cart
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <h3
+                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                            Volumizing Mascara</h3>
+                        <p class="text-xs text-gray-500 mb-2">Makeup</p>
+                        <span class="font-medium">$22.00</span>
+                    </div>
+                </div>
+
+                <!-- New Product 16: Santal & Vetiver Candle -->
+                <div class="group relative product-card" data-id="16" data-name="Santal & Vetiver Candle"
+                    data-price="45.00" data-image="images/wellness_santal_candle.png" data-category="Wellness"
+                    data-description="Hand-poured soy wax candle with notes of warm sandalwood, earthy vetiver, and amber.">
+                    <div
+                        class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                        <img src="images/wellness_santal_candle.png" alt="Santal & Vetiver Candle"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                        <button
+                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">
+                            Add to Cart
+                        </button>
+                        <span
+                            class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">New</span>
+                    </div>
+                    <div class="text-center">
+                        <h3
+                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                            Santal & Vetiver Candle</h3>
+                        <p class="text-xs text-gray-500 mb-2">Wellness</p>
+                        <span class="font-medium">$45.00</span>
+                    </div>
+                </div>
+            </div>
             </div>
         </section>
 
@@ -438,6 +743,9 @@
     <!-- GSAP (CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Razorpay Checkout -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <!-- Custom Script -->
     <script src="script.js"></script>

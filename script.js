@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollAnimations();
     initCart();
     initProductModal();
+    initSearch();
 });
 
 // --- Cart System ---
@@ -20,7 +21,13 @@ function initCart() {
     const closeCartBtn = document.getElementById('close-cart');
     const overlay = document.getElementById('overlay');
     const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
-    const modalAddToCartBtn = document.getElementById('modal-add-to-cart'); // Get the modal button too
+    const modalAddToCartBtn = document.getElementById('modal-add-to-cart');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    // Checkout Button
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', handlePayment);
+    }
 
     // Toggle Cart
     cartBtn.addEventListener('click', toggleCart);
@@ -288,4 +295,104 @@ function initScrollAnimations() {
             }
         });
     });
+}
+
+// --- Search System ---
+function initSearch() {
+    const searchBtn = document.getElementById('search-btn');
+    const closeSearchBtn = document.getElementById('close-search');
+    const searchOverlay = document.getElementById('search-overlay');
+    const searchInput = document.getElementById('search-input');
+    const overlay = document.getElementById('overlay');
+
+    // Toggle Search Logic
+    function toggleSearch() {
+        const isClosed = searchOverlay.classList.contains('-translate-y-full');
+
+        if (isClosed) {
+            // Open
+            searchOverlay.classList.remove('-translate-y-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            searchInput.focus();
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Close
+            searchOverlay.classList.add('-translate-y-full');
+            // Only hide overlay if cart is also closed
+            if (!cartState.isOpen) {
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+                document.body.style.overflow = '';
+            }
+        }
+    }
+
+    searchBtn.addEventListener('click', toggleSearch);
+    closeSearchBtn.addEventListener('click', toggleSearch);
+
+    // Live Filter Logic
+    searchInput.addEventListener('keyup', (e) => {
+        const term = e.target.value.toLowerCase();
+        const products = document.querySelectorAll('.product-card');
+        const bestSellersSection = document.getElementById('bestsellers');
+
+        // Ensure we are looking at the best sellers section
+        if (term.length > 0) {
+            bestSellersSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        products.forEach(product => {
+            const name = product.dataset.name.toLowerCase();
+            const category = product.dataset.category.toLowerCase();
+            const description = product.dataset.description.toLowerCase();
+
+            if (name.includes(term) || category.includes(term) || description.includes(term)) {
+                product.style.display = 'block';
+                // Reset animation to make it visible if it was hidden
+                gsap.to(product, { opacity: 1, y: 0, duration: 0.3 });
+            } else {
+                product.style.display = 'none';
+            }
+        });
+    });
+}
+
+// --- Payment System ---
+function handlePayment() {
+    if (cartState.items.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    const totalAmount = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    const options = {
+        "key": "rzp_test_YOUR_KEY_HERE", // Replace with your actual key
+        "amount": Math.round(totalAmount * 100), // Amount in smallest currency unit
+        "currency": "USD",
+        "name": "Bhumi Beauty",
+        "description": "Purchase Description",
+        "image": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+        "handler": function (response) {
+            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+            cartState.items = [];
+            updateCartUI();
+            toggleCart();
+        },
+        "prefill": {
+            "name": "Test User",
+            "email": "test.user@example.com",
+            "contact": "9999999999"
+        },
+        "theme": {
+            "color": "#eeb4b4"
+        }
+    };
+
+    const rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response) {
+        alert("Payment Failed: " + response.error.description);
+    });
+    rzp1.open();
 }

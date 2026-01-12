@@ -79,3 +79,8 @@ body {
     background-color: rgba(0, 0, 0, 0.1);
     border-radius: 3px;
 }
+
+.product-card {
+    border: 1px solid red;
+    display: grid;
+}
