@@ -1,0 +1,10 @@
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+.env.backup
+.pytest_cache
+.DS_Store
+.vscode
+Thumbs.db
