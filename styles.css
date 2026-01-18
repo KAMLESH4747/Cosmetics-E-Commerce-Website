@@ -80,7 +80,9 @@ body {
     border-radius: 3px;
 }
 
+/* Product Grid Layout */
+/* Handled via Tailwind classes in HTML: grid-cols-1 md:grid-cols-4 */
+
 .product-card {
-    border: 1px solid red;
-    display: grid;
+    /* border: 1px solid red; - Removed debug border */
 }
