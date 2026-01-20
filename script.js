@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCart();
     initProductModal();
     initSearch();
+    initCategoriesDropdown();
 });
 
 // --- Cart System ---
@@ -168,7 +169,7 @@ function updateCartUI() {
     }
 }
 
-// Global functions for inline onclick handlers (simpler than adding event listeners to everything dynamically)
+// Global functions for inline onclick handlers
 window.updateCartItemQuantity = updateCartItemQuantity;
 window.removeFromCart = removeFromCart;
 window.toggleCart = toggleCart;
@@ -205,9 +206,6 @@ function openModal(product) {
     // Populate Data
     document.getElementById('modal-category').innerText = product.category;
     document.getElementById('modal-title').innerText = product.name;
-    document.getElementById('modal-price').innerText = '$' + product.price;
-    document.getElementById('modal-description').innerText = product.description;
-
     document.getElementById('modal-price').innerText = '$' + product.price;
     document.getElementById('modal-description').innerText = product.description;
 
@@ -250,7 +248,7 @@ function initHeroAnimations() {
         opacity: 1,
         duration: 1,
         stagger: 0.2,
-        delay: 0.2 // Wait for load
+        delay: 0.2
     });
 }
 
@@ -297,7 +295,60 @@ function initScrollAnimations() {
     });
 }
 
-// --- Search System ---
+// --- Categories Dropdown System ---
+function initCategoriesDropdown() {
+    const btn = document.getElementById('categories-btn');
+    const dropdown = document.getElementById('categories-dropdown');
+
+    if (!btn || !dropdown) return;
+
+    // Toggle Dropdown
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown();
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+            closeDropdown();
+        }
+    });
+
+    // Category Filter Logic
+    const links = dropdown.querySelectorAll('a[data-category]');
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const category = link.dataset.category;
+            filterProducts(category);
+            closeDropdown();
+
+            // Scroll to bestsellers where grid is
+            const bestSellersSection = document.getElementById('bestsellers');
+            if (bestSellersSection) {
+                bestSellersSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    function toggleDropdown() {
+        const isClosed = dropdown.classList.contains('invisible');
+        if (isClosed) {
+            dropdown.classList.remove('invisible', 'opacity-0', 'translate-y-2');
+            btn.querySelector('svg').style.transform = 'rotate(180deg)';
+        } else {
+            closeDropdown();
+        }
+    }
+
+    function closeDropdown() {
+        dropdown.classList.add('invisible', 'opacity-0', 'translate-y-2');
+        btn.querySelector('svg').style.transform = 'rotate(0deg)';
+    }
+}
+
+// --- Search and Filter System ---
 function initSearch() {
     const searchBtn = document.getElementById('search-btn');
     const closeSearchBtn = document.getElementById('close-search');
@@ -310,16 +361,16 @@ function initSearch() {
         const isClosed = searchOverlay.classList.contains('-translate-y-full');
 
         if (isClosed) {
-            // Open
             searchOverlay.classList.remove('-translate-y-full');
             overlay.classList.remove('hidden');
             setTimeout(() => overlay.classList.remove('opacity-0'), 10);
             searchInput.focus();
             document.body.style.overflow = 'hidden';
+
+            // Reset filter when opening search
+            // filterProducts(''); 
         } else {
-            // Close
             searchOverlay.classList.add('-translate-y-full');
-            // Only hide overlay if cart is also closed
             if (!cartState.isOpen) {
                 overlay.classList.add('opacity-0');
                 setTimeout(() => overlay.classList.add('hidden'), 300);
@@ -333,28 +384,32 @@ function initSearch() {
 
     // Live Filter Logic
     searchInput.addEventListener('keyup', (e) => {
-        const term = e.target.value.toLowerCase();
-        const products = document.querySelectorAll('.product-card');
-        const bestSellersSection = document.getElementById('bestsellers');
+        const term = e.target.value;
+        filterProducts(term);
 
-        // Ensure we are looking at the best sellers section
+        const bestSellersSection = document.getElementById('bestsellers');
         if (term.length > 0) {
             bestSellersSection.scrollIntoView({ behavior: 'smooth' });
         }
+    });
+}
 
-        products.forEach(product => {
-            const name = product.dataset.name.toLowerCase();
-            const category = product.dataset.category.toLowerCase();
-            const description = product.dataset.description.toLowerCase();
+// Shared filter function
+function filterProducts(term) {
+    term = term.toLowerCase();
+    const products = document.querySelectorAll('.product-card');
 
-            if (name.includes(term) || category.includes(term) || description.includes(term)) {
-                product.style.display = 'block';
-                // Reset animation to make it visible if it was hidden
-                gsap.to(product, { opacity: 1, y: 0, duration: 0.3 });
-            } else {
-                product.style.display = 'none';
-            }
-        });
+    products.forEach(product => {
+        const name = product.dataset.name.toLowerCase();
+        const category = product.dataset.category.toLowerCase();
+        const description = product.dataset.description.toLowerCase();
+
+        if (name.includes(term) || category.includes(term) || description.includes(term) || term === '') {
+            product.style.display = 'block';
+            gsap.to(product, { opacity: 1, y: 0, duration: 0.3 });
+        } else {
+            product.style.display = 'none';
+        }
     });
 }
 
@@ -368,8 +423,8 @@ function handlePayment() {
     const totalAmount = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     const options = {
-        "key": "rzp_test_YOUR_KEY_HERE", // Replace with your actual key
-        "amount": Math.round(totalAmount * 100), // Amount in smallest currency unit
+        "key": "rzp_test_YOUR_KEY_HERE",
+        "amount": Math.round(totalAmount * 100),
         "currency": "USD",
         "name": "Bhumi Beauty",
         "description": "Purchase Description",
