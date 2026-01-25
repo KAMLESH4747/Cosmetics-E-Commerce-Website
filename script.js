@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initCategoriesDropdown();
     initCategorySectionLinks();
     initURLParams();
+    loadCart(); // Load cart data on startup
+    initCheckoutPage(); // Initialize checkout page logic if present
 });
 
 // --- Cart System ---
@@ -18,6 +20,20 @@ const cartState = {
     items: [],
     isOpen: false
 };
+
+// Load Cart from LocalStorage
+function loadCart() {
+    const savedCart = localStorage.getItem('cartItems');
+    if (savedCart) {
+        cartState.items = JSON.parse(savedCart);
+        updateCartUI();
+    }
+}
+
+// Save Cart to LocalStorage
+function saveCart() {
+    localStorage.setItem('cartItems', JSON.stringify(cartState.items));
+}
 
 function initCart() {
     const cartBtn = document.getElementById('cart-btn');
@@ -169,6 +185,7 @@ function updateCartUI() {
         const total = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         cartTotal.innerText = '$' + total.toFixed(2);
     }
+    saveCart(); // Save state whenever UI updates
 }
 
 // Global functions for inline onclick handlers
@@ -417,36 +434,8 @@ function handlePayment() {
         return;
     }
 
-    const totalAmount = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-    const options = {
-        "key": "rzp_test_YOUR_KEY_HERE",
-        "amount": Math.round(totalAmount * 100),
-        "currency": "USD",
-        "name": "Bhumi Beauty",
-        "description": "Purchase Description",
-        "image": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-        "handler": function (response) {
-            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
-            cartState.items = [];
-            updateCartUI();
-            toggleCart();
-        },
-        "prefill": {
-            "name": "Test User",
-            "email": "test.user@example.com",
-            "contact": "9999999999"
-        },
-        "theme": {
-            "color": "#eeb4b4"
-        }
-    };
-
-    const rzp1 = new Razorpay(options);
-    rzp1.on('payment.failed', function (response) {
-        alert("Payment Failed: " + response.error.description);
-    });
-    rzp1.open();
+    // Redirect to Checkout Page
+    window.location.href = 'checkout.html';
 }
 
 // --- Category Section Links System ---
@@ -511,3 +500,108 @@ function initURLParams() {
     }
 }
 
+
+// --- Checkout Page Logic ---
+function initCheckoutPage() {
+    const checkoutItemsContainer = document.getElementById('checkout-items');
+    const subtotalEl = document.getElementById('checkout-subtotal');
+    const totalEl = document.getElementById('checkout-total');
+    const placeOrderBtn = document.getElementById('place-order-btn');
+
+    if (!placeOrderBtn) return; // Not on checkout page
+
+    // Load from LocalStorage
+    loadCart();
+
+    if (cartState.items.length === 0) {
+        checkoutItemsContainer.innerHTML = '<p class="text-center text-gray-500">Your cart is empty.</p>';
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        return;
+    }
+
+    // Render Items
+    checkoutItemsContainer.innerHTML = cartState.items.map(item => `
+        <div class="flex gap-4">
+            <div class="w-16 h-20 bg-gray-100 rounded-sm overflow-hidden flex-shrink-0">
+                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1">
+                <h4 class="font-serif text-base leading-tight mb-1">${item.name}</h4>
+                <div class="flex justify-between items-center mt-2">
+                    <p class="text-xs text-brand-dark uppercase tracking-wider">Qty: ${item.quantity}</p>
+                    <p class="text-sm font-medium">$${(item.price * item.quantity).toFixed(2)}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    // Calculate Totals
+    const total = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const totalStr = '$' + total.toFixed(2);
+
+    subtotalEl.innerText = totalStr;
+    totalEl.innerText = totalStr;
+
+    // Handle Place Order
+    placeOrderBtn.addEventListener('click', handlePlaceOrder);
+}
+
+function handlePlaceOrder() {
+    const phoneInput = document.getElementById('payment-phone');
+    const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+
+    // Step 1: Validate Phone
+    if (!phoneInput.value.trim()) {
+        alert("Please enter your phone number.");
+        phoneInput.focus();
+        return;
+    }
+
+    // Step 2: Handle Payment Method
+    if (paymentMethod === 'cod') {
+        alert("Order Placed Successfully via Cash on Delivery!");
+        clearCart();
+        window.location.href = 'index.html';
+    } else {
+        processRazorpayPayment();
+    }
+}
+
+function processRazorpayPayment() {
+    const totalAmount = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    const options = {
+        "key": "rzp_test_YOUR_KEY_HERE",
+        "amount": Math.round(totalAmount * 100),
+        "currency": "USD",
+        "name": "Radiance & Rituals",
+        "description": "Purchase Description",
+        "image": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+        "handler": function (response) {
+            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+            clearCart();
+            window.location.href = 'index.html';
+        },
+        "prefill": {
+            "name": "Test User",
+            "email": "test.user@example.com",
+            "contact": "9999999999"
+        },
+        "theme": {
+            "color": "#eeb4b4"
+        }
+    };
+
+    const rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response) {
+        alert("Payment Failed: " + response.error.description);
+    });
+    rzp1.open();
+}
+
+function clearCart() {
+    cartState.items = [];
+    saveCart();
+    updateCartUI();
+}
