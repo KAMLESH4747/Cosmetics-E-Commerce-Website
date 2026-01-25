@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initProductModal();
     initSearch();
     initCategoriesDropdown();
+    initCategorySectionLinks();
+    initURLParams();
 });
 
 // --- Cart System ---
@@ -190,7 +192,8 @@ function initProductModal() {
                 name: card.dataset.name,
                 price: card.dataset.price,
                 description: card.dataset.description,
-                category: card.dataset.category
+                category: card.dataset.category,
+                image: card.dataset.image
             };
             openModal(product);
         });
@@ -321,14 +324,8 @@ function initCategoriesDropdown() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const category = link.dataset.category;
-            filterProducts(category);
+            selectCategory(category);
             closeDropdown();
-
-            // Scroll to bestsellers where grid is
-            const bestSellersSection = document.getElementById('bestsellers');
-            if (bestSellersSection) {
-                bestSellersSection.scrollIntoView({ behavior: 'smooth' });
-            }
         });
     });
 
@@ -451,3 +448,66 @@ function handlePayment() {
     });
     rzp1.open();
 }
+
+// --- Category Section Links System ---
+function initCategorySectionLinks() {
+    const categoryLinks = document.querySelectorAll('.category-card-link');
+
+    if (!categoryLinks.length) return;
+
+    categoryLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Prevent default anchor behavior if clicking the "View Collection" button
+            const anchor = e.target.closest('a');
+            if (anchor) {
+                e.preventDefault();
+            }
+
+            const category = link.dataset.category;
+            selectCategory(category);
+        });
+    });
+}
+
+// --- Unified Category Navigation Logic ---
+function selectCategory(category) {
+    if (!category) return;
+
+    // 1. Update URL (Deep Linking)
+    const url = new URL(window.location);
+    url.searchParams.set('category', category);
+    window.history.pushState({ category: category }, '', url);
+
+    // 2. Scroll to Section
+    // Normalize category to ID (e.g., "Skincare" -> "skincare")
+    const sectionId = category.toLowerCase().replace(/\s+/g, '');
+    const section = document.getElementById(sectionId);
+
+    if (section) {
+        // Offset for fixed navbar
+        const yOffset = -100;
+        const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+}
+
+// Handle Browser Back/Forward
+window.addEventListener('popstate', (e) => {
+    const category = e.state ? e.state.category : '';
+    if (category) {
+        selectCategory(category);
+    }
+});
+
+// Handle Initial Page Load
+function initURLParams() {
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get('category');
+    if (category) {
+        // Use a small timeout to ensure DOM elements are ready
+        setTimeout(() => {
+            selectCategory(category);
+        }, 500);
+    }
+}
+

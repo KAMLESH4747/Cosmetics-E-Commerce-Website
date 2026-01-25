@@ -23,9 +23,13 @@ Route::get('/', function () {
 Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-    // Future Admin Routes (Placeholders)
-    // Route::get('/products', [ProductController::class, 'index'])->name('admin.products');
-    // Route::get('/orders', [OrderController::class, 'index'])->name('admin.orders');
-    // Route::get('/users', [UserController::class, 'index'])->name('admin.users');
-    // Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
+    // Product Routes
+    Route::resource('products', \App\Http\Controllers\ProductController::class)->names([
+        'index' => 'admin.products.index',
+        'create' => 'admin.products.create',
+        'store' => 'admin.products.store',
+        'edit' => 'admin.products.edit',
+        'update' => 'admin.products.update',
+        'destroy' => 'admin.products.destroy',
+    ]);
 });

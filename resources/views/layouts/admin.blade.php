@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --bs-body-font-family: 'Inter', sans-serif;
@@ -53,6 +55,8 @@
             font-size: 0.95rem;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
         }
 
         .nav-link:hover,
@@ -63,9 +67,10 @@
         }
 
         .nav-link i {
-            margin-right: 10px;
+            margin-right: 15px;
             width: 20px;
             text-align: center;
+            font-size: 1.1rem;
         }
 
         /* Main Content Styling */
@@ -129,23 +134,31 @@
             Bhumi Beauty
         </div>
         <div class="nav flex-column">
-            <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+            <a href="{{ route('admin.dashboard') }}"
+                class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="{{ route('admin.products.index') }}"
+                class="nav-link {{ request()->routeIs('admin.products*') ? 'active' : '' }}">
+                <i class="fas fa-box"></i>
                 <span>Manage Products</span>
             </a>
             <a href="#" class="nav-link">
+                <i class="fas fa-shopping-bag"></i>
                 <span>Manage Orders</span>
             </a>
             <a href="#" class="nav-link">
+                <i class="fas fa-users"></i>
                 <span>Users</span>
             </a>
             <a href="#" class="nav-link">
+                <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </a>
             <div class="mt-auto">
                 <a href="#" class="nav-link text-danger">
+                    <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
             </div>
