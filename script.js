@@ -575,7 +575,7 @@ function processRazorpayPayment() {
         "key": "rzp_test_YOUR_KEY_HERE",
         "amount": Math.round(totalAmount * 100),
         "currency": "USD",
-        "name": "Radiance & Rituals",
+        "name": "Lumina",
         "description": "Purchase Description",
         "image": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
         "handler": function (response) {
