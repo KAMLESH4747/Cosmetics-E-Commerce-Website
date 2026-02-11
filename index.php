@@ -1,4 +1,15 @@
+<?php
+require_once 'config.php';
+
+try {
+    $stmt = $pdo->query("SELECT * FROM products ORDER BY id DESC");
+    $products = $stmt->fetchAll();
+} catch (PDOException $e) {
+    echo "Error fetching products: " . $e->getMessage();
+}
+?>
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -414,258 +425,44 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-12 product-grid">
-                    <div class="group relative product-card" data-id="1" data-name="Salicylic Acid 2%"
-                        data-price="11.00" data-image="images/minimalist_salicylic.png" data-category="Skincare"
-                        data-description="A daily gentle exfoliant with 2% Salicylic Acid that wards off acne, blackheads and keeps oils in check.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/minimalist_salicylic.png" alt="Salicylic Acid 2%"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <div
-                                class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <?php if (count($products) > 0): ?>
+                            <?php foreach ($products as $product): ?>
+                                <div class="group relative product-card" 
+                                    data-id="<?php echo $product['id']; ?>" 
+                                    data-name="<?php echo htmlspecialchars($product['name']); ?>"
+                                    data-price="<?php echo $product['price']; ?>" 
+                                    data-image="uploads/<?php echo htmlspecialchars($product['image']); ?>" 
+                                    data-category="<?php echo htmlspecialchars($product['category']); ?>"
+                                    data-description="<?php echo htmlspecialchars($product['description']); ?>">
+                                    <div class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                                        <img src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                                        <div
+                                            class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        </div>
+                                        <button
+                                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
+                                            to Cart</button>
+                                        <?php if ($product['is_bestseller']): ?>
+                                            <span
+                                                class="absolute top-4 left-4 bg-brand-rose text-white text-[10px] uppercase font-bold px-2 py-1 tracking-wider">Bestseller</span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="text-center">
+                                        <h3
+                                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                            <?php echo htmlspecialchars($product['name']); ?></h3>
+                                        <p class="text-xs text-gray-500 mb-2"><?php echo htmlspecialchars($product['category']); ?></p>
+                                        <span class="font-medium">$<?php echo number_format($product['price'], 2); ?></span>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                    <?php else: ?>
+                            <div class="col-span-full text-center py-12">
+                                <p class="text-gray-500 text-lg">No products found. Head to the Admin Panel to add some!</p>
                             </div>
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                            <span
-                                class="absolute top-4 left-4 bg-brand-rose text-white text-[10px] uppercase font-bold px-2 py-1 tracking-wider">Bestseller</span>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Salicylic Acid 2%</h3>
-                            <p class="text-xs text-gray-500 mb-2">Skincare</p>
-                            <span class="font-medium">$11.00</span>
-                        </div>
-                    </div>
+                    <?php endif; ?>
 
-                    <div class="group relative product-card" data-id="2" data-name="Niacinamide 10%" data-price="12.00"
-                        data-image="images/minimalist_niacinamide.png" data-category="Skincare"
-                        data-description="A nourishing, daily serum packed with pure Vitamin B3 (Niacinamide) and Matmarine.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/minimalist_niacinamide.png" alt="Niacinamide 10%"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Niacinamide 10%</h3>
-                            <p class="text-xs text-gray-500 mb-2">Skincare</p>
-                            <span class="font-medium">$12.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="8" data-name="Hyaluronic Boost" data-price="28.00"
-                        data-image="images/skincare_hyaluronic_serum.png" data-category="Skincare"
-                        data-description="Pure multi-molecular weight Hyaluronic Acid serum that penetrates deep to hydrate.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/skincare_hyaluronic_serum.png" alt="Hyaluronic Boost"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Hyaluronic Boost</h3>
-                            <p class="text-xs text-gray-500 mb-2">Skincare</p>
-                            <span class="font-medium">$28.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="7" data-name="Velvet Matte Rouge"
-                        data-price="32.00" data-image="images/makeup_velvet_lipstick.png" data-category="Makeup"
-                        data-description="A highly pigmented, non-drying matte lipstick that delivers intense color payoff.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/makeup_velvet_lipstick.png" alt="Velvet Matte Rouge"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Velvet Matte Rouge</h3>
-                            <p class="text-xs text-gray-500 mb-2">Makeup</p>
-                            <span class="font-medium">$32.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="13" data-name="Luminous Silk Foundation"
-                        data-price="42.00" data-image="images/makeup_luminous_foundation.png" data-category="Makeup"
-                        data-description="A lightweight, buildable coverage foundation that delivers a natural, luminous finish.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/makeup_luminous_foundation.png" alt="Luminous Silk Foundation"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Luminous Silk Foundation</h3>
-                            <p class="text-xs text-gray-500 mb-2">Makeup</p>
-                            <span class="font-medium">$42.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="15" data-name="Volumizing Mascara"
-                        data-price="22.00" data-image="images/makeup_volumizing_mascara.png" data-category="Makeup"
-                        data-description="Intense black mascara that delivers instant volume and length without clumping.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/makeup_volumizing_mascara.png" alt="Volumizing Mascara"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Volumizing Mascara</h3>
-                            <p class="text-xs text-gray-500 mb-2">Makeup</p>
-                            <span class="font-medium">$22.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="5" data-name="Calm & Sleep Mist"
-                        data-price="24.00" data-image="images/wellness_calm_mist.png" data-category="Wellness"
-                        data-description="A soothing botanical mist infused with lavender and chamomile to promote deep relaxation.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/wellness_calm_mist.png" alt="Calm & Sleep Mist"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                            <span
-                                class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">New</span>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Calm & Sleep Mist</h3>
-                            <p class="text-xs text-gray-500 mb-2">Wellness</p>
-                            <span class="font-medium">$24.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="16" data-name="Santal & Vetiver Candle"
-                        data-price="45.00" data-image="images/wellness_santal_candle.png" data-category="Wellness"
-                        data-description="Hand-poured soy wax candle with notes of warm sandalwood, earthy vetiver, and amber.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/wellness_santal_candle.png" alt="Santal & Vetiver Candle"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                            <span
-                                class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">New</span>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Santal & Vetiver Candle</h3>
-                            <p class="text-xs text-gray-500 mb-2">Wellness</p>
-                            <span class="font-medium">$45.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="29" data-name="Herbal Sleep Tea Blend"
-                        data-price="20.00" data-image="images/wellness_herbal_tea.png" data-category="Wellness"
-                        data-description="A soothing loose-leaf blend of chamomile, lavender, and valerian root.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/wellness_herbal_tea.png" alt="Herbal Sleep Tea Blend"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Herbal Sleep Tea Blend</h3>
-                            <p class="text-xs text-gray-500 mb-2">Wellness</p>
-                            <span class="font-medium">$20.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="17" data-name="Jasmine & Neroli Bloom"
-                        data-price="75.00" data-image="images/fragrance_jasmine_neroli.png" data-category="Fragrance"
-                        data-description="A radiant floral bouquet of fresh jasmine and citrusy neroli.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/fragrance_jasmine_neroli.png" alt="Jasmine & Neroli Bloom"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                            <span
-                                class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">New</span>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Jasmine & Neroli Bloom</h3>
-                            <p class="text-xs text-gray-500 mb-2">Fragrance</p>
-                            <span class="font-medium">$75.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="30" data-name="Dyson Airwrap™ Multi-styler"
-                        data-price="599.00" data-image="images/dyson_airwrap.png" data-category="Haircare"
-                        data-description="Curl, wave, smooth, and dry with no extreme heat. The only styler to curl, shape and hide flyaways using the Coanda effect.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/dyson_airwrap.png" alt="Dyson Airwrap™ Multi-styler"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                            <span
-                                class="absolute top-4 right-4 text-brand-dark text-[10px] uppercase font-bold border border-brand-dark px-2 py-1 tracking-wider">New</span>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Dyson Airwrap™</h3>
-                            <p class="text-xs text-gray-500 mb-2">Haircare</p>
-                            <span class="font-medium">$599.00</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative product-card" data-id="20" data-name="Ceramic Aromatherapy Diffuser"
-                        data-price="55.00" data-image="images/wellness_diffuser.png" data-category="Wellness"
-                        data-description="A minimalist ceramic diffuser that transforms your space with a fine, cool mist.">
-                        <div
-                            class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                            <img src="images/wellness_diffuser.png" alt="Ceramic Aromatherapy Diffuser"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                            <button
-                                class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                to Cart</button>
-                        </div>
-                        <div class="text-center">
-                            <h3
-                                class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                Ceramic Aromatherapy Diffuser</h3>
-                            <p class="text-xs text-gray-500 mb-2">Wellness</p>
-                            <span class="font-medium">$55.00</span>
-                        </div>
-                    </div>
 
                 </div>
             </div>

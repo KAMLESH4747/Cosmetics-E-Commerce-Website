@@ -548,24 +548,50 @@ function initCheckoutPage() {
 }
 
 function handlePlaceOrder() {
+    const firstName = document.querySelector('input[placeholder="Jane"]').value;
+    const lastName = document.querySelector('input[placeholder="Doe"]').value;
     const phoneInput = document.getElementById('payment-phone');
     const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
 
-    // Step 1: Validate Phone
-    if (!phoneInput.value.trim()) {
-        alert("Please enter your phone number.");
-        phoneInput.focus();
+    // Step 1: Validate Inputs
+    if (!firstName || !lastName || !phoneInput.value.trim()) {
+        alert("Please fill in all required fields (Name, Phone).");
         return;
     }
 
-    // Step 2: Handle Payment Method
-    if (paymentMethod === 'cod') {
-        alert("Order Placed Successfully via Cash on Delivery!");
-        clearCart();
-        window.location.href = 'index.html';
-    } else {
-        processRazorpayPayment();
-    }
+    const customerName = `${firstName} ${lastName}`;
+    const totalAmount = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Step 2: Prepare Data
+    const orderData = {
+        customer_name: customerName,
+        total_amount: totalAmount,
+        items: cartState.items,
+        payment_method: paymentMethod
+    };
+
+    // Step 3: Send to Backend
+    fetch('place_order.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Order Placed Successfully! Order ID: " + data.order_id);
+                clearCart();
+                window.location.href = 'index.php';
+            } else {
+                alert("Failed to place order: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("An error occurred while placing the order.");
+        });
 }
 
 function processRazorpayPayment() {
