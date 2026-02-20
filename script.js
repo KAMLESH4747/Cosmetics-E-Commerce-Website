@@ -145,6 +145,9 @@ function updateCartUI() {
     const cartItemsContainer = document.getElementById('cart-items');
     const cartTotal = document.getElementById('cart-total');
 
+    // Guard: these elements only exist on index.php, not checkout.php
+    if (!cartCount || !cartItemsContainer || !cartTotal) return;
+
     // Update Count
     const totalItems = cartState.items.reduce((sum, item) => sum + item.quantity, 0);
     cartCount.innerText = totalItems;
@@ -510,8 +513,11 @@ function initCheckoutPage() {
 
     if (!placeOrderBtn) return; // Not on checkout page
 
-    // Load from LocalStorage
-    loadCart();
+    // Load cart data from localStorage directly (avoids crashing updateCartUI on checkout page)
+    const savedCart = localStorage.getItem('cartItems');
+    if (savedCart) {
+        cartState.items = JSON.parse(savedCart);
+    }
 
     if (cartState.items.length === 0) {
         checkoutItemsContainer.innerHTML = '<p class="text-center text-gray-500">Your cart is empty.</p>';
@@ -548,14 +554,15 @@ function initCheckoutPage() {
 }
 
 function handlePlaceOrder() {
-    const firstName = document.querySelector('input[placeholder="Jane"]').value;
-    const lastName = document.querySelector('input[placeholder="Doe"]').value;
+    const firstName = document.getElementById('first-name').value.trim();
+    const lastName = document.getElementById('last-name').value.trim();
     const phoneInput = document.getElementById('payment-phone');
-    const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+    const paymentMethodEl = document.querySelector('input[name="payment-method"]:checked');
+    const paymentMethod = paymentMethodEl ? paymentMethodEl.value : 'cod';
 
     // Step 1: Validate Inputs
-    if (!firstName || !lastName || !phoneInput.value.trim()) {
-        alert("Please fill in all required fields (Name, Phone).");
+    if (!firstName || !lastName || !phoneInput || !phoneInput.value.trim()) {
+        alert("Please fill in all required fields (First Name, Last Name, Phone).");
         return;
     }
 
