@@ -435,7 +435,7 @@ function handlePayment() {
     }
 
     // Redirect to Checkout Page
-    window.location.href = 'checkout.html';
+    window.location.href = 'checkout.php';
 }
 
 // --- Category Section Links System ---

@@ -2,7 +2,7 @@
 require_once 'config.php';
 
 try {
-    $stmt = $pdo->query("SELECT * FROM products ORDER BY id DESC");
+    $stmt = $pdo->query("SELECT * FROM products WHERE is_bestseller = 1 ORDER BY id DESC LIMIT 8");
     $products = $stmt->fetchAll();
 } catch (PDOException $e) {
     echo "Error fetching products: " . $e->getMessage();
@@ -426,41 +426,44 @@ try {
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-12 product-grid">
                     <?php if (count($products) > 0): ?>
-                            <?php foreach ($products as $product): ?>
-                                <div class="group relative product-card" 
-                                    data-id="<?php echo $product['id']; ?>" 
-                                    data-name="<?php echo htmlspecialchars($product['name']); ?>"
-                                    data-price="<?php echo $product['price']; ?>" 
-                                    data-image="uploads/<?php echo htmlspecialchars($product['image']); ?>" 
-                                    data-category="<?php echo htmlspecialchars($product['category']); ?>"
-                                    data-description="<?php echo htmlspecialchars($product['description']); ?>">
-                                    <div class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
-                                        <img src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                                        <div
-                                            class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        </div>
-                                        <button
-                                            class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
-                                            to Cart</button>
-                                        <?php if ($product['is_bestseller']): ?>
-                                            <span
-                                                class="absolute top-4 left-4 bg-brand-rose text-white text-[10px] uppercase font-bold px-2 py-1 tracking-wider">Bestseller</span>
-                                        <?php endif; ?>
+                        <?php foreach ($products as $product): ?>
+                            <div class="group relative product-card" data-id="<?php echo $product['id']; ?>"
+                                data-name="<?php echo htmlspecialchars($product['name']); ?>"
+                                data-price="<?php echo $product['price']; ?>"
+                                data-image="uploads/<?php echo htmlspecialchars($product['image']); ?>"
+                                data-category="<?php echo htmlspecialchars($product['category']); ?>"
+                                data-description="<?php echo htmlspecialchars($product['description']); ?>">
+                                <div
+                                    class="aspect-[4/5] bg-brand-cream rounded-md overflow-hidden relative mb-4 cursor-pointer view-product">
+                                    <img src="uploads/<?php echo htmlspecialchars($product['image']); ?>"
+                                        alt="<?php echo htmlspecialchars($product['name']); ?>"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                                    <div
+                                        class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     </div>
-                                    <div class="text-center">
-                                        <h3
-                                            class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
-                                            <?php echo htmlspecialchars($product['name']); ?></h3>
-                                        <p class="text-xs text-gray-500 mb-2"><?php echo htmlspecialchars($product['category']); ?></p>
-                                        <span class="font-medium">$<?php echo number_format($product['price'], 2); ?></span>
-                                    </div>
+                                    <button
+                                        class="add-to-cart-btn absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 bg-white text-brand-dark px-6 py-3 text-xs uppercase tracking-widest font-bold shadow-lg transition-all duration-300 hover:bg-brand-dark hover:text-white w-[90%]">Add
+                                        to Cart</button>
+                                    <?php if ($product['is_bestseller']): ?>
+                                        <span
+                                            class="absolute top-4 left-4 bg-brand-rose text-white text-[10px] uppercase font-bold px-2 py-1 tracking-wider">Bestseller</span>
+                                    <?php endif; ?>
                                 </div>
-                            <?php endforeach; ?>
-                    <?php else: ?>
-                            <div class="col-span-full text-center py-12">
-                                <p class="text-gray-500 text-lg">No products found. Head to the Admin Panel to add some!</p>
+                                <div class="text-center">
+                                    <h3
+                                        class="font-serif text-lg mb-1 group-hover:text-brand-rose transition-colors cursor-pointer view-product">
+                                        <?php echo htmlspecialchars($product['name']); ?>
+                                    </h3>
+                                    <p class="text-xs text-gray-500 mb-2"><?php echo htmlspecialchars($product['category']); ?>
+                                    </p>
+                                    <span class="font-medium">$<?php echo number_format($product['price'], 2); ?></span>
+                                </div>
                             </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="col-span-full text-center py-12">
+                            <p class="text-gray-500 text-lg">No products found. Head to the Admin Panel to add some!</p>
+                        </div>
                     <?php endif; ?>
 
 
